@@ -6,10 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.devhack.motomoto.sportevents.db.meta.SportEventsDBMeta;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -21,6 +18,7 @@ import java.util.UUID;
 @Table(schema = SportEventsDBMeta.schema, name = SportEventsDBMeta.event.name)
 public class Event {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = SportEventsDBMeta.event.fld.id)
     private UUID id;
 
@@ -33,8 +31,8 @@ public class Event {
     @Column(name = SportEventsDBMeta.event.fld.registration_over)
     private Boolean registrationOver;
 
-    @Column(name = SportEventsDBMeta.event.fld.limit)
-    private Integer limit;
+    @Column(name = SportEventsDBMeta.event.fld.event_limit)
+    private Integer eventLimit;
 
     @Column(name = SportEventsDBMeta.event.fld.description)
     private String description;

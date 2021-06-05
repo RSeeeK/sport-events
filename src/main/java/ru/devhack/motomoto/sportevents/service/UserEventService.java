@@ -2,9 +2,10 @@ package ru.devhack.motomoto.sportevents.service;
 
 import com.sun.istack.NotNull;
 import org.springframework.stereotype.Service;
+import ru.devhack.motomoto.sportevents.db.entity.UserEvent;
+import ru.devhack.motomoto.sportevents.db.repository.UserEventRepository;
 import ru.devhack.motomoto.sportevents.model.UserEventModel;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,47 +13,61 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserEventService {
-    private final List<UserEventModel> data = new ArrayList<>(); {
-        data.add(UserEventModel.builder()
-                .userId(UUID.fromString("f4b40b03-79e2-41d9-8223-952cffea90c7"))
-                .eventId(UUID.fromString("2268c91e-a158-467b-8a66-9779a1a9eefd"))
-                .participationType(UserEventModel.ParticipationType.SPORTSMAN)
-                .approved(false)
-                .build());
-        data.add(UserEventModel.builder()
-                .userId(UUID.fromString("fc75510b-1d44-40cd-8b2a-020395287612"))
-                .eventId(UUID.fromString("f5b45eaa-5cab-4e82-8a7a-bb62dd0278c1"))
-                .participationType(UserEventModel.ParticipationType.SPORTSMAN)
-                .approved(true)
-                .build());
-        data.add(UserEventModel.builder()
-                .userId(UUID.fromString("fc75510b-1d44-40cd-8b2a-020395287612"))
-                .eventId(UUID.fromString("62b5f20d-5cd8-46ec-806a-b8ad41d99c80"))
-                .participationType(UserEventModel.ParticipationType.FAN)
-                .approved(false)
-                .build());
+    private final UserEventRepository userEventRepository;
+
+    public UserEventService(UserEventRepository userEventRepository) {
+        this.userEventRepository = userEventRepository;
     }
 
-    public List<UserEventModel> getAllByUserId(@NotNull UUID id) {
-        return data.stream()
-                .filter(userEventModel -> userEventModel.getUserId().equals(id))
+    public List<UserEventModel> getAllByUserId(@NotNull UUID userId) {
+        return userEventRepository.findAllByUserId(userId).stream()
+                .map(this::convertToModel)
+                .collect(Collectors.toList());
+    }
+
+    public List<UserEventModel> getAllByEventId(@NotNull UUID eventId) {
+        return userEventRepository.findAllByEventId(eventId).stream()
+                .map(this::convertToModel)
                 .collect(Collectors.toList());
     }
 
     public UserEventModel save(@NotNull UserEventModel userEventModel) {
-        data.add(userEventModel);
+        userEventRepository.save(convertToUserEvent(userEventModel));
         return userEventModel;
     }
 
     public Optional<UserEventModel> getByUserEventId(@NotNull UUID userId, @NotNull UUID eventId) {
-        return data.stream()
-                .filter(userEventModel -> userEventModel.getUserId().equals(userId)
-                        && userEventModel.getEventId().equals(eventId))
-                .findFirst();
+        return userEventRepository.findAllByUserAndEventId(userId, eventId).stream()
+                .findFirst()
+                .map(this::convertToModel);
     }
 
     public UserEventModel approveUserParticipation(UserEventModel userEventModel) {
         userEventModel.setApproved(true);
+        save(userEventModel);
         return userEventModel;
     }
+
+    public UserEvent convertToUserEvent(UserEventModel userEventModel) {
+        return UserEvent.builder()
+                .userEventPK(UserEvent.UserEventPK.builder()
+                        .eventId(userEventModel.getEventId())
+                        .userId(userEventModel.getUserId())
+                        .build())
+                .participationType(userEventModel.getParticipationType() != null ? userEventModel.getParticipationType().name() : null)
+                .approved(userEventModel.getApproved())
+                .build();
+    }
+
+    public UserEventModel convertToModel(UserEvent userEvent) {
+        return UserEventModel.builder()
+                .eventId(userEvent.getUserEventPK() != null ? userEvent.getUserEventPK().getEventId() : null)
+                .userId(userEvent.getUserEventPK() != null ? userEvent.getUserEventPK().getUserId() : null)
+                .participationType(userEvent.getParticipationType() != null && !userEvent.getParticipationType().isEmpty()
+                        ? UserEventModel.ParticipationType.valueOf(userEvent.getParticipationType())
+                        : null)
+                .approved(userEvent.getApproved())
+                .build();
+    }
+
 }

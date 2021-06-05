@@ -2,6 +2,8 @@ package ru.devhack.motomoto.sportevents.service;
 
 import com.sun.istack.NotNull;
 import org.springframework.stereotype.Service;
+import ru.devhack.motomoto.sportevents.db.entity.UserActivity;
+import ru.devhack.motomoto.sportevents.db.repository.UserActivityRepository;
 import ru.devhack.motomoto.sportevents.model.ActivityModel;
 import ru.devhack.motomoto.sportevents.model.UserActivityModel;
 
@@ -22,20 +24,47 @@ public class UserActivityService {
         }
     }
 
-    private final List<UserActivityModel> userActivities = new ArrayList<>();
+    private final UserActivityRepository userActivityRepository;
+
+    public UserActivityService(UserActivityRepository userActivityRepository) {
+        this.userActivityRepository = userActivityRepository;
+    }
 
     public List<ActivityModel> getAllActivity() {
         return activities;
     }
 
     public UserActivityModel save(@NotNull UserActivityModel userActivityModel) {
-        userActivities.add(userActivityModel);
+        UserActivity userActivity = userActivityRepository.save(convertToUserActivity(userActivityModel));
+        userActivityModel.setId(userActivity.getId());
         return userActivityModel;
     }
 
     public List<UserActivityModel> getByUserId(@NotNull UUID userId) {
-        return userActivities.stream()
-                .filter(userActivityModel -> userActivityModel.getUserId().equals(userId))
+        return userActivityRepository.findAllByUserId(userId).stream()
+                .map(this::convertToModel)
                 .collect(Collectors.toList());
+    }
+
+    public UserActivity convertToUserActivity(UserActivityModel userActivityModel) {
+        return UserActivity.builder()
+                .id(userActivityModel.getId())
+                .activityDate(userActivityModel.getActivityDate())
+                .userId(userActivityModel.getUserId())
+                .imageUrl(userActivityModel.getImageUrl())
+                .type(userActivityModel.getType() != null ? userActivityModel.getType().name() : null)
+                .build();
+    }
+
+    public UserActivityModel convertToModel(UserActivity userActivity) {
+        return UserActivityModel.builder()
+                .id(userActivity.getId())
+                .activityDate(userActivity.getActivityDate())
+                .imageUrl(userActivity.getImageUrl())
+                .userId(userActivity.getUserId())
+                .type(userActivity.getType() != null && !userActivity.getType().isEmpty()
+                        ? ActivityModel.ActivityType.valueOf(userActivity.getType())
+                        : null)
+                .build();
     }
 }

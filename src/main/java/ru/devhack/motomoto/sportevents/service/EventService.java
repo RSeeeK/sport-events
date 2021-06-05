@@ -1,71 +1,82 @@
 package ru.devhack.motomoto.sportevents.service;
 
 import org.springframework.stereotype.Service;
+import ru.devhack.motomoto.sportevents.db.entity.Event;
+import ru.devhack.motomoto.sportevents.db.repository.EventRepository;
 import ru.devhack.motomoto.sportevents.model.EventModel;
+import ru.devhack.motomoto.sportevents.model.EventWithUserModel;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
-    private final List<EventModel> data = new ArrayList<>(); {
-        data.add(EventModel.builder()
-                .id(UUID.fromString("f5b45eaa-5cab-4e82-8a7a-bb62dd0278c1"))
-                .eventDate(LocalDateTime.of(2021, Month.AUGUST, 23, 12, 30))
-                .registrationOver(false)
-                .address("Москва, Ленинский проспект 20")
-                .name("Краткое описания мероприятия 1")
-                .description("Тут какое-то очень длинное описание: " +
-                        "опавпол дваолдпол ваплодпваолд лопваол" +
-                        "пдвалджпвалдж пвлджаджлпвджл пвдлжалджпв" +
-                        "плвалдпв лджлджпвалджпвад жлпвадлж лджпва" +
-                        "пвал длджпвалжд пвадлжваплджвп алджпвалдж" +
-                        "аыволыовалдол давыолды ваолд.")
-                .imageUrl("https://topcelebration.ru/wp-content/uploads/2015/07/4.%D0%9A%D0%BE%D1%80%D0%BF%D0%BE%D1%80%D0%B0%D1%82%D0%B8%D0%B2.jpg")
-                .limit(100)
-                .build());
-        data.add(EventModel.builder()
-                .id(UUID.fromString("2268c91e-a158-467b-8a66-9779a1a9eefd"))
-                .eventDate(LocalDateTime.of(2021, Month.SEPTEMBER, 15, 20, 15))
-                .registrationOver(false)
-                .address("Санкт-Петербург, Дворцовая площадь")
-                .name("Краткое описания мероприятия 2")
-                .description("Тут какое-то очень длинное описание: " +
-                        "опавпол дваолдпол ваплодпваолд лопваол" +
-                        "пдвалджпвалдж пвлджаджлпвджл пвдлжалджпв" +
-                        "плвалдпв лджлджпвалджпвад жлпвадлж лджпва" +
-                        "пвал длджпвалжд пвадлжваплджвп алджпвалдж" +
-                        "аыволыовалдол давыолды ваолд.")
-                .imageUrl("https://topcelebration.ru/wp-content/uploads/2015/07/4.%D0%9A%D0%BE%D1%80%D0%BF%D0%BE%D1%80%D0%B0%D1%82%D0%B8%D0%B2.jpg")
-                .limit(100)
-                .build());
-        data.add(EventModel.builder()
-                .id(UUID.fromString("62b5f20d-5cd8-46ec-806a-b8ad41d99c80"))
-                .eventDate(LocalDateTime.of(2021, Month.JULY, 11, 17, 50))
-                .registrationOver(true)
-                .address("Самара, Красноармейская улица 93")
-                .name("Краткое описания мероприятия 3")
-                .description("Тут какое-то очень длинное описание: " +
-                        "опавпол дваолдпол ваплодпваолд лопваол" +
-                        "пдвалджпвалдж пвлджаджлпвджл пвдлжалджпв" +
-                        "плвалдпв лджлджпвалджпвад жлпвадлж лджпва" +
-                        "пвал длджпвалжд пвадлжваплджвп алджпвалдж" +
-                        "аыволыовалдол давыолды ваолд.")
-                .imageUrl("https://topcelebration.ru/wp-content/uploads/2015/07/4.%D0%9A%D0%BE%D1%80%D0%BF%D0%BE%D1%80%D0%B0%D1%82%D0%B8%D0%B2.jpg")
-                .limit(100)
-                .build());
+    private final EventRepository eventRepository;
+
+    private final UserEventService userEventService;
+
+    public EventService(EventRepository eventRepository, UserEventService userEventService) {
+        this.eventRepository = eventRepository;
+        this.userEventService = userEventService;
     }
 
     public List<EventModel> getAll() {
-        return data;
+        return eventRepository.findAll().stream()
+                .map(this::convertToModel)
+                .collect(Collectors.toList());
+    }
+
+    public List<EventWithUserModel> getAllWithUser() {
+        return eventRepository.findAll().stream()
+                .map(this::convertToModelWithUser)
+                .collect(Collectors.toList());
     }
 
     public EventModel save(EventModel eventModel) {
-        eventModel.setId(UUID.randomUUID());
-        data.add(eventModel);
+        Event event = save(convertToEvent(eventModel));
+        eventModel.setId(event.getId());
         return eventModel;
+    }
+
+    public Event save(Event event) {
+        return eventRepository.save(event);
+    }
+
+    private Event convertToEvent(EventModel eventModel) {
+        return Event.builder()
+                .id(eventModel.getId())
+                .eventDate(eventModel.getEventDate())
+                .registrationOver(eventModel.getRegistrationOver())
+                .imageUrl(eventModel.getImageUrl())
+                .eventLimit(eventModel.getLimit())
+                .description(eventModel.getDescription())
+                .address(eventModel.getAddress())
+                .name(eventModel.getName())
+                .build();
+    }
+
+    public EventModel convertToModel(Event event) {
+        return EventModel.builder()
+                .id(event.getId())
+                .eventDate(event.getEventDate())
+                .registrationOver(event.getRegistrationOver())
+                .imageUrl(event.getImageUrl())
+                .limit(event.getEventLimit())
+                .description(event.getDescription())
+                .address(event.getAddress())
+                .name(event.getName())
+                .build();
+    }
+
+    public EventWithUserModel convertToModelWithUser(Event event) {
+        return new EventWithUserModel(event.getId(),
+                event.getName(),
+                event.getEventDate(),
+                event.getRegistrationOver(),
+                event.getEventLimit(),
+                event.getDescription(),
+                event.getAddress(),
+                event.getImageUrl(),
+                userEventService.getAllByEventId(event.getId()));
     }
 }

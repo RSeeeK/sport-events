@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.devhack.motomoto.sportevents.db.meta.SportEventsDBMeta;
-import ru.devhack.motomoto.sportevents.model.UserModel;
 
 import javax.persistence.*;
 import java.util.Collection;

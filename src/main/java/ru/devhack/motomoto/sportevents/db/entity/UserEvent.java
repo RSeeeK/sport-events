@@ -1,11 +1,7 @@
 package ru.devhack.motomoto.sportevents.db.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.devhack.motomoto.sportevents.db.meta.SportEventsDBMeta;
-import ru.devhack.motomoto.sportevents.model.UserEventModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,14 +17,17 @@ public class UserEvent {
     @EmbeddedId
     private UserEventPK userEventPK;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = SportEventsDBMeta.user_event.fld.participation_type)
-    private UserEventModel.ParticipationType participationType;
+    private String participationType;
 
     @Column(name = SportEventsDBMeta.user_event.fld.approved)
     private Boolean approved;
 
     @Embeddable
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
     public static class UserEventPK implements Serializable {
         @Column(name = SportEventsDBMeta.user_event.fld.event_id)
         private UUID eventId;

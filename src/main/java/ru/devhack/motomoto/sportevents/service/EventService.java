@@ -86,15 +86,17 @@ public class EventService {
     }
 
     public EventWithUserModel convertToModelWithUser(Event event) {
-        return new EventWithUserModel(event.getId(),
-                event.getName(),
-                event.getEventDate(),
-                event.getRegistrationOver(),
-                event.getEventLimit(),
-                event.getDescription(),
-                event.getAddress(),
-                event.getImageUrl(),
-                userEventService.getAllByEventId(event.getId()));
+        return EventWithUserModel.builder()
+                .id(event.getId())
+                .name(event.getName())
+                .eventDate(event.getEventDate())
+                .registrationOver(event.getRegistrationOver())
+                .limit(event.getEventLimit())
+                .description(event.getDescription())
+                .address(event.getAddress())
+                .imageUrl(event.getImageUrl())
+                .userRegistered(userEventService.getAllByEventId(event.getId()))
+                .build();
     }
 
     public EventWithUserParticipationModel convertToModelWithUserParticipation(Event event, @Nullable UserEventModel userEventModel) {
@@ -104,15 +106,17 @@ public class EventService {
 
         Boolean approved = userEventModel != null && userEventModel.getApproved();
 
-        return new EventWithUserParticipationModel(event.getId(),
-                event.getName(),
-                event.getEventDate(),
-                event.getRegistrationOver(),
-                event.getEventLimit(),
-                event.getDescription(),
-                event.getAddress(),
-                event.getImageUrl(),
-                participationType,
-                approved);
+        return EventWithUserParticipationModel.builder()
+                .id(event.getId())
+                .name(event.getName())
+                .eventDate(event.getEventDate())
+                .registrationOver(event.getRegistrationOver())
+                .limit(event.getEventLimit())
+                .description(event.getDescription())
+                .address(event.getAddress())
+                .imageUrl(event.getImageUrl())
+                .participationType(participationType)
+                .approved(approved)
+                .build();
     }
 }

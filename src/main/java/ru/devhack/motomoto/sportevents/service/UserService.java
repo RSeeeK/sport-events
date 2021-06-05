@@ -55,4 +55,8 @@ public class UserService {
                 .role(user.getRole() != null && !user.getRole().isEmpty() ? UserModel.UserRole.valueOf(user.getRole()) : null)
                 .build();
     }
+
+    public void delete(UUID userId) {
+        userRepository.deleteById(userId);
+    }
 }

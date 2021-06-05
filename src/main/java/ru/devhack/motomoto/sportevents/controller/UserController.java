@@ -47,4 +47,20 @@ public class UserController {
                 .body(userModel))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
+
+    @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Удалить пользователя по ID")
+    public @ResponseBody
+    @NotNull
+    ResponseEntity<UserModel> deleteUserById(@PathVariable UUID userId) {
+        Optional<UserModel> userModelOptional = userService.findUserById(userId);
+        if (userModelOptional.isPresent()) {
+            userService.delete(userId);
+        }
+        return userModelOptional.map(userModel -> ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(userModel))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
 }

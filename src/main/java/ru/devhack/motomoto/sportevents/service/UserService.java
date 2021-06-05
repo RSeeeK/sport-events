@@ -1,7 +1,10 @@
 package ru.devhack.motomoto.sportevents.service;
 
 import com.sun.istack.NotNull;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.devhack.motomoto.sportevents.db.entity.User;
+import ru.devhack.motomoto.sportevents.db.repository.UserRepository;
 import ru.devhack.motomoto.sportevents.model.UserModel;
 
 import java.util.ArrayList;
@@ -32,6 +35,16 @@ public class UserService {
                 .build());
     }
 
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public List<UserModel> getAll() {
         return data;
     }
@@ -40,5 +53,14 @@ public class UserService {
         return data.stream()
                 .filter(userModel -> userModel.getId().equals(id))
                 .findFirst();
+    }
+
+    public User registerNew(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.saveAndFlush(user);
+    }
+
+    public Optional<User> findUserByEmployeeCode(String employeeCode) {
+        return userRepository.findByEmployeeCode(employeeCode);
     }
 }

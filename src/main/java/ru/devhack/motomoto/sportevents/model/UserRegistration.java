@@ -7,18 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
 
-import java.util.UUID;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Jacksonized
-public class UserModel {
-    @ApiModelProperty(value = "ID пользователя")
-    private UUID id;
-    @ApiModelProperty(value = "Табельный номер")
+public class UserRegistration {
+    @ApiModelProperty(value = "Логин (табельный номер)")
     private String employeeCode;
+    @ApiModelProperty(value = "Пароль")
+    private String password;
     @ApiModelProperty(value = "Имя")
     private String firstName;
     @ApiModelProperty(value = "Отчество")
@@ -28,20 +26,5 @@ public class UserModel {
     @ApiModelProperty(value = "URL изображения")
     private String imageUrl;
     @ApiModelProperty(value = "Роль пользователя")
-    private UserRole role;
-
-    public enum UserRole {
-        PARTICIPANT("Участник"),
-        EVENT_MAKER("Организатор");
-
-        private final String description;
-
-        UserRole(String description) {
-            this.description = description;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
+    private UserModel.UserRole role;
 }

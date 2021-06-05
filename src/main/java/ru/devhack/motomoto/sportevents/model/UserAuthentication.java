@@ -19,4 +19,8 @@ public class UserAuthentication {
     private String employeeCode;
     @ApiModelProperty(value = "Токен авторизации")
     private String token;
+    @ApiModelProperty(value = "Результат авторизации")
+    private Boolean result;
+    @ApiModelProperty(value = "Текст ошибки")
+    private String errorMessage;
 }

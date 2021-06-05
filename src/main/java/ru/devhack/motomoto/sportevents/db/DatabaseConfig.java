@@ -34,6 +34,7 @@ public class DatabaseConfig {
                 .dataSource(dbUrl, dbUser, dbPassword)
                 .schemas(SportEventsDBMeta.schema);
         Flyway flyway = fluentConfiguration.load();
+        flyway.repair();
         flyway.migrate();
         return flyway;
     }

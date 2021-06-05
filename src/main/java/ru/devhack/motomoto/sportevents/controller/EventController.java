@@ -21,11 +21,8 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
 
-    private final ObjectMapper mapper;
-
     public EventController(EventService eventService) {
         this.eventService = eventService;
-        this.mapper = new ObjectMapper().registerModule(new Jdk8Module());
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

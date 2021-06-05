@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.devhack.motomoto.sportevents.model.ActivityModel;
-import ru.devhack.motomoto.sportevents.model.EventModel;
 import ru.devhack.motomoto.sportevents.model.UserActivity;
 import ru.devhack.motomoto.sportevents.service.UserActivityService;
 

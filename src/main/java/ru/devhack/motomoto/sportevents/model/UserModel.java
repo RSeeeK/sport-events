@@ -23,4 +23,21 @@ public class UserModel {
     private String lastName;
     @ApiModelProperty(value = "URL изображения")
     private String imageUrl;
+    @ApiModelProperty(value = "Роль пользователя")
+    private UserRole role;
+
+    public enum UserRole {
+        PARTICIPANT("Участник"),
+        EVENT_MAKER("Организатор");
+
+        private final String description;
+
+        UserRole(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
 }

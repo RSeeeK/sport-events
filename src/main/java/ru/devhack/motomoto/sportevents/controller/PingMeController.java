@@ -8,7 +8,7 @@ import ru.devhack.motomoto.sportevents.db.repository.PingMeRepository;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/v1/test")
+@RequestMapping(ApiMeta.apiv1 + "/test")
 public class PingMeController {
 
     private final PingMeRepository pingMeRepository;

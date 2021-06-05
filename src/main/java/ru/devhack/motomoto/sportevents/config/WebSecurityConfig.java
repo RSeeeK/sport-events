@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import ru.devhack.motomoto.sportevents.controller.ApiMeta;
 
 /**
  * Spring security configuration
@@ -39,8 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers(SWAGGER_WHITELIST).permitAll()
-                .antMatchers("/api/v1/auth/**").permitAll()
-                .antMatchers("/api/v1/test/**").permitAll()
+                .antMatchers(ApiMeta.apiv1 + "/**").permitAll()
                 .anyRequest().authenticated();
 
         //http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

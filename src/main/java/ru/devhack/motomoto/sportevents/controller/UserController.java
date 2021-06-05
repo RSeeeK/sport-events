@@ -11,6 +11,8 @@ import ru.devhack.motomoto.sportevents.model.UserModel;
 import ru.devhack.motomoto.sportevents.service.UserService;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = ApiMeta.apiv1 + "/user")
@@ -31,5 +33,18 @@ public class UserController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(userService.getAll());
+    }
+
+    @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Получить пользователя по ID")
+    public @ResponseBody
+    @NotNull
+    ResponseEntity<UserModel> getUserById(@PathVariable UUID userId) {
+        Optional<UserModel> userModelOptional = userService.findUserById(userId);
+        return userModelOptional.map(userModel -> ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(userModel))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }

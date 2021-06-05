@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.devhack.motomoto.sportevents.model.ActivityModel;
-import ru.devhack.motomoto.sportevents.model.UserActivity;
+import ru.devhack.motomoto.sportevents.model.UserActivityModel;
 import ru.devhack.motomoto.sportevents.service.UserActivityService;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class UserActivityController {
     @ApiOperation(value = "Получить активности пользователя по id")
     public @ResponseBody
     @NotNull
-    ResponseEntity<List<UserActivity>> allUserActivities(@PathVariable UUID userId) {
+    ResponseEntity<List<UserActivityModel>> allUserActivities(@PathVariable UUID userId) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(userActivityService.getByUserId(userId));
@@ -52,9 +52,9 @@ public class UserActivityController {
     @ApiOperation(value = "Создать активность пользователя")
     public @ResponseBody
     @NotNull
-    ResponseEntity<UserActivity> createUserActivity(@RequestBody UserActivity userActivity) {
+    ResponseEntity<UserActivityModel> createUserActivity(@RequestBody UserActivityModel userActivityModel) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(userActivityService.save(userActivity));
+                .body(userActivityService.save(userActivityModel));
     }
 }

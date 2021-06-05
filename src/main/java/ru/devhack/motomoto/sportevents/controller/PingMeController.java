@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.devhack.motomoto.sportevents.db.repository.PingMeRepository;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600 * 24 * 7)
 @RestController
 @RequestMapping(ApiMeta.apiv1 + "/test")
 public class PingMeController {

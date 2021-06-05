@@ -21,6 +21,8 @@ public class UserEventModel {
     private UUID userId;
     @ApiModelProperty(value = "Тип участия: FAN или SPORTSMAN")
     private ParticipationType participationType;
+    @ApiModelProperty(value = "Признак подтверждения участия в мероприятии")
+    private Boolean approved;
 
     public enum ParticipationType {
         FAN("Болельщик"),

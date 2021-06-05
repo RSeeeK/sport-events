@@ -3,7 +3,7 @@ package ru.devhack.motomoto.sportevents.service;
 import com.sun.istack.NotNull;
 import org.springframework.stereotype.Service;
 import ru.devhack.motomoto.sportevents.model.ActivityModel;
-import ru.devhack.motomoto.sportevents.model.UserActivity;
+import ru.devhack.motomoto.sportevents.model.UserActivityModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,20 +22,20 @@ public class UserActivityService {
         }
     }
 
-    private final List<UserActivity> userActivities = new ArrayList<>();
+    private final List<UserActivityModel> userActivities = new ArrayList<>();
 
     public List<ActivityModel> getAllActivity() {
         return activities;
     }
 
-    public UserActivity save(@NotNull UserActivity userActivity) {
-        userActivities.add(userActivity);
-        return userActivity;
+    public UserActivityModel save(@NotNull UserActivityModel userActivityModel) {
+        userActivities.add(userActivityModel);
+        return userActivityModel;
     }
 
-    public List<UserActivity> getByUserId(@NotNull UUID userId) {
+    public List<UserActivityModel> getByUserId(@NotNull UUID userId) {
         return userActivities.stream()
-                .filter(userActivity -> userActivity.getUserId().equals(userId))
+                .filter(userActivityModel -> userActivityModel.getUserId().equals(userId))
                 .collect(Collectors.toList());
     }
 }

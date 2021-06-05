@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Jacksonized
-public class UserActivity {
+public class UserActivityModel {
     @ApiModelProperty(value = "ID активности")
     private UUID id;
     @ApiModelProperty(value = "ID пользователя")

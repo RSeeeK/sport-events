@@ -1,10 +1,12 @@
 package ru.devhack.motomoto.sportevents.service;
 
+import com.sun.istack.NotNull;
 import org.springframework.stereotype.Service;
 import ru.devhack.motomoto.sportevents.model.UserModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -32,5 +34,11 @@ public class UserService {
 
     public List<UserModel> getAll() {
         return data;
+    }
+
+    public Optional<UserModel> findUserById(@NotNull UUID id) {
+        return data.stream()
+                .filter(userModel -> userModel.getId().equals(id))
+                .findFirst();
     }
 }

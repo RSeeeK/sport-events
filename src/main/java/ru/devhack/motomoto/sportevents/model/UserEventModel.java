@@ -26,7 +26,8 @@ public class UserEventModel {
 
     public enum ParticipationType {
         FAN("Болельщик"),
-        SPORTSMAN("Спортсмен");
+        SPORTSMAN("Спортсмен"),
+        NONE("Не участвует");
 
         private final String description;
 

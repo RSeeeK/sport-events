@@ -1,12 +1,16 @@
 package ru.devhack.motomoto.sportevents.service;
 
+import com.sun.istack.Nullable;
 import org.springframework.stereotype.Service;
 import ru.devhack.motomoto.sportevents.db.entity.Event;
 import ru.devhack.motomoto.sportevents.db.repository.EventRepository;
 import ru.devhack.motomoto.sportevents.model.EventModel;
 import ru.devhack.motomoto.sportevents.model.EventWithUserModel;
+import ru.devhack.motomoto.sportevents.model.EventWithUserParticipationModel;
+import ru.devhack.motomoto.sportevents.model.UserEventModel;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +33,19 @@ public class EventService {
     public List<EventWithUserModel> getAllWithUser() {
         return eventRepository.findAll().stream()
                 .map(this::convertToModelWithUser)
+                .collect(Collectors.toList());
+    }
+
+    public List<EventWithUserParticipationModel> getAllWithUserParticipation(UUID userId) {
+        List<UserEventModel> userEventModels = userEventService.getAllByUserId(userId);
+        return eventRepository.findAll().stream()
+                .map(event -> {
+                    UserEventModel userEventModel = userEventModels.stream()
+                            .filter(model -> model.getEventId().equals(event.getId()))
+                            .findFirst()
+                            .orElse(null);
+                    return convertToModelWithUserParticipation(event, userEventModel);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -78,5 +95,24 @@ public class EventService {
                 event.getAddress(),
                 event.getImageUrl(),
                 userEventService.getAllByEventId(event.getId()));
+    }
+
+    public EventWithUserParticipationModel convertToModelWithUserParticipation(Event event, @Nullable UserEventModel userEventModel) {
+        UserEventModel.ParticipationType participationType = userEventModel == null
+                ? UserEventModel.ParticipationType.NONE
+                : userEventModel.getParticipationType();
+
+        Boolean approved = userEventModel != null && userEventModel.getApproved();
+
+        return new EventWithUserParticipationModel(event.getId(),
+                event.getName(),
+                event.getEventDate(),
+                event.getRegistrationOver(),
+                event.getEventLimit(),
+                event.getDescription(),
+                event.getAddress(),
+                event.getImageUrl(),
+                participationType,
+                approved);
     }
 }
